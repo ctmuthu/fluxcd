@@ -1,22 +1,13 @@
 apiVersion: helm.fluxcd.io/v1
 kind: HelmRelease
 metadata:
-  name: changecontainer
+  name: squid
   namespace: demo
 spec:
-  releaseName: changecontainer
+  releaseName: squid
   chart:
-    git: ssh://git@github.com/ctmuthu/squid
+    git: https://github.developer.allianz.io/CloudTribe/azure-shared-helm-charts
     ref: master
-    path: .
-  values:
-    image:
-      repository: ctmuthu93/squidrepo
-      tag: ubuntu
-    usePassword: false
-    persistence:
-      enabled: false
-    securityContext:
-      enabled: true
-      fsGroup: 0
-      runAsUser: 0
+    path: squid
+
+# Values can be pushed in here

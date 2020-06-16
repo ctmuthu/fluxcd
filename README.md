@@ -1,50 +1,34 @@
-# flux-get-started
+Run the below commands in the cluster
 
-[![CircleCI](https://circleci.com/gh/fluxcd/flux-get-started.svg?style=svg)](https://circleci.com/gh/fluxcd/flux-get-started)
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
 
-We published a step-by-step run-through on how to use Flux and Helm Operator [over
-here](https://github.com/fluxcd/flux/blob/master/docs/tutorials/get-started-helm.md).
+sudo snap install fluxctl --classic
 
-## Workloads
+kubectl -n kube-system create sa tiller
 
-[podinfo](https://github.com/stefanprodan/podinfo)
-* Kubernetes deployment, ClusterIP service and Horizontal Pod Autoscaler
-* init container automated image updates (regular expression filter)
-* container automated image updates (semantic versioning filter)
-
-## Helm Releases
-
-Mongodb
-* Source: Helm repository (stable)
-* Kubernetes deployment
-* automated image updates (semantic versioning filter)
-
-Redis
-* Source: Helm repository (stable)
-* Kubernetes stateful set 
-* locked automated image updates (semantic versioning filter)
-
-Ghost
-* Source: Git repository
-* disabled automated image updates (glob filter)
-* has external dependency - mariadb (stable)
-
-## Manifests Validation
-
-CircleCI [jobs](./.circleci/config.yml):
-* validate Kubernetes manifests with [kubeval](https://github.com/instrumenta/kubeval)
-* validate Flux Helm Releases with [hrval](https://github.com/stefanprodan/hrval-action)
-
-### <a name="help"></a>Getting Help
-
-If you have any questions about, feedback for or problems with `flux-get-started`:
+kubectl create clusterrolebinding tiller-cluster-rule \\
+    --clusterrole=cluster-admin \\
+    --serviceaccount=kube-system:tiller
 
 
-- Invite yourself to the <a href="https://slack.cncf.io" target="_blank">CNCF community</a>
-  slack and ask a question on the [#flux](https://cloud-native.slack.com/messages/flux/)
-  channel.
-- To be part of the conversation about Flux's development, join the
-  [flux-dev mailing list](https://lists.cncf.io/g/cncf-flux-dev).
-- [File an issue.](https://github.com/fluxcd/flux/issues/new)
+helm repo add fluxcd https://charts.fluxcd.io
 
-Your feedback is always welcome!
+kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
+
+kubectl create namespace flux
+
+helm upgrade -i flux fluxcd/flux \\
+   --set git.url=git@github.com:ctmuthu/flux-get-started \\
+   --namespace flux
+
+helm upgrade -i helm-operator fluxcd/helm-operator --wait \\
+--namespace flux \\
+--set git.ssh.secretName=flux-git-deploy \\
+--set helm.versions=v3
+
+
+Fetch the deploy key using the below command and update the repo:
+
+fluxctl identity --k8s-fwd-ns flux
