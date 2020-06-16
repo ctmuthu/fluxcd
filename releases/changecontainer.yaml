@@ -1,0 +1,22 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: changecontainer
+  namespace: demo
+spec:
+  releaseName: changecontainer
+  chart:
+    git: https://github.com/ctmuthu/squid
+    ref: master
+    path: .
+  values:
+    image:
+      repository: ctmuthu93/squid
+      tag: latest
+    usePassword: false
+    persistence:
+      enabled: false
+    securityContext:
+      enabled: true
+      fsGroup: 0
+      runAsUser: 0
