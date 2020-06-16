@@ -11,8 +11,8 @@ spec:
     path: .
   values:
     image:
-      repository: ctmuthu93/squid
-      tag: latest
+      repository: ctmuthu93/squidrepo
+      tag: ubuntu
     usePassword: false
     persistence:
       enabled: false
