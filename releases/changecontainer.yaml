@@ -6,7 +6,7 @@ metadata:
 spec:
   releaseName: changecontainer
   chart:
-    git: https://github.com/ctmuthu/squid
+    git: ssh://git@github.com/ctmuthu/squid
     ref: master
     path: .
   values:
